@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Удаление</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 100px auto; padding: 20px; text-align: center; }
+        .warning { background: #fee; padding: 20px; border-radius: 8px; border-left: 5px solid #c0392b; }
+        button { background: #c0392b; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .cancel { background: #95a5a6; margin-left: 10px; text-decoration: none; padding: 10px 20px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="warning">
+        <h2>Подтверждение удаления</h2>
+        <p>Вы уверены, что хотите удалить защиту:</p>
+        <p><strong>{{ defence.author }} — {{ defence.title|truncatechars:100 }}</strong></p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Да, удалить</button>
+            <a href="{% url 'list' %}" class="cancel">Отмена</a>
+        </form>
+    </div>
+</body>
+</html>

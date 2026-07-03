@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Диссертационный совет ВоГУ</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #0a3d62; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .btn { display: inline-block; padding: 6px 12px; margin: 2px; text-decoration: none; border-radius: 4px; }
+        .btn-add { background: #27ae60; color: white; padding: 10px 20px; }
+        .btn-edit { background: #2980b9; color: white; }
+        .btn-delete { background: #c0392b; color: white; }
+        h1 { color: #0a3d62; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .scheduled { background: #f39c12; color: white; }
+        .defended { background: #27ae60; color: white; }
+        .btn-login { background: #2980b9; color: white; padding: 10px 20px; }
+        .btn-logout { background: #c0392b; color: white; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+    <h1>Диссертационный совет Вологодского государственного университета</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'create' %}" class="btn btn-add">+ Добавить защиту</a>
+        <a href="{% url 'logout' %}" class="btn btn-logout">Выйти</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-login">Вход для сотрудника</a>
+    {% endif %}
+</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Автор</th>
+                <th>Название темы</th>
+                <th>Тип</th>
+                <th>Дата защиты</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for defence in defences %}
+            <tr>
+                <td>{{ defence.author }}</td>
+                <td>{{ defence.title }}</td>
+                <td>{{ defence.get_defence_type_display }}</td>
+                <td>{{ defence.defence_date|date:"d.m.Y" }}</td>
+                <td>
+                    <span class="badge {% if defence.status == 'scheduled' %}scheduled{% else %}defended{% endif %}">
+                        {{ defence.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'edit' defence.pk %}" class="btn btn-edit">Ред.</a>
+                    <a href="{% url 'delete' defence.pk %}" class="btn btn-delete">Уд.</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center;">Нет записей о защитах</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

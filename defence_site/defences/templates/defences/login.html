@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Вход для сотрудника</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 100px auto; padding: 20px; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { background: #0a3d62; color: white; padding: 10px; border: none; width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Вход для сотрудника</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Войти</button>
+    </form>
+    <p><a href="{% url 'list' %}">На главную</a></p>
+</body>
+</html>
