@@ -11,27 +11,61 @@
         tr:nth-child(even) { background-color: #f2f2f2; }
         .btn { display: inline-block; padding: 6px 12px; margin: 2px; text-decoration: none; border-radius: 4px; }
         .btn-add { background: #27ae60; color: white; padding: 10px 20px; }
+        .btn-add:hover { background: #219a52; }
         .btn-edit { background: #2980b9; color: white; }
+        .btn-edit:hover { background: #2471a3; }
         .btn-delete { background: #c0392b; color: white; }
-        h1 { color: #0a3d62; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .btn-delete:hover { background: #a93226; }
+        .btn-login { background: #0a3d62; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; }
+        .btn-login:hover { background: #1a4d72; }
+        .btn-logout { background: #c0392b; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; }
+        .btn-logout:hover { background: #a93226; }
+
+        h1 {
+            color: #0a3d62;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 20px;
+        }
+        .header h1 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 1;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .scheduled { background: #f39c12; color: white; }
         .defended { background: #27ae60; color: white; }
-        .btn-login { background: #2980b9; color: white; padding: 10px 20px; }
-        .btn-logout { background: #c0392b; color: white; padding: 10px 20px; }
+        .failed { background: #c0392b; color: white; }
+        .empty-message { text-align: center; padding: 40px; color: #666; font-size: 16px; }
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
     <div class="header">
-    <h1>Диссертационный совет Вологодского государственного университета</h1>
-    {% if user.is_authenticated %}
-        <a href="{% url 'create' %}" class="btn btn-add">+ Добавить защиту</a>
-        <a href="{% url 'logout' %}" class="btn btn-logout">Выйти</a>
-    {% else %}
-        <a href="{% url 'login' %}" class="btn btn-login">Вход для сотрудника</a>
-    {% endif %}
-</div>
+        <h1>Диссертационный совет Вологодского государственного университета</h1>
+        <div class="user-info">
+            {% if user.is_authenticated %}
+                <a href="{% url 'create' %}" class="btn btn-add">+ Добавить защиту</a>
+                <a href="{% url 'logout' %}" class="btn btn-logout">Выйти</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-login">Вход для сотрудника</a>
+            {% endif %}
+        </div>
+    </div>
 
     <table>
         <thead>
@@ -52,18 +86,28 @@
                 <td>{{ defence.get_defence_type_display }}</td>
                 <td>{{ defence.defence_date|date:"d.m.Y" }}</td>
                 <td>
-                    <span class="badge {% if defence.status == 'scheduled' %}scheduled{% else %}defended{% endif %}">
+                    <span class="badge
+                        {% if defence.status == 'scheduled' %}scheduled
+                        {% elif defence.status == 'defended' %}defended
+                        {% elif defence.status == 'failed' %}failed
+                        {% endif %}">
                         {{ defence.get_status_display }}
                     </span>
                 </td>
                 <td>
-                    <a href="{% url 'edit' defence.pk %}" class="btn btn-edit">Ред.</a>
-                    <a href="{% url 'delete' defence.pk %}" class="btn btn-delete">Уд.</a>
+                    {% if user.is_authenticated %}
+                        <div class="actions">
+                            <a href="{% url 'edit' defence.pk %}" class="btn btn-edit">Ред.</a>
+                            <a href="{% url 'delete' defence.pk %}" class="btn btn-delete">Уд.</a>
+                        </div>
+                    {% else %}
+                        <span style="color: #999; font-size: 12px;">требуется вход</span>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" style="text-align: center;">Нет записей о защитах</td>
+                <td colspan="6" class="empty-message">Нет записей о защитах</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -5,17 +5,31 @@
     <title>Вход для сотрудника</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 400px; margin: 100px auto; padding: 20px; }
-        input { width: 100%; padding: 8px; margin: 5px 0; }
-        button { background: #0a3d62; color: white; padding: 10px; border: none; width: 100%; }
+        input { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+        button { background: #0a3d62; color: white; padding: 10px; border: none; width: 100%; cursor: pointer; }
+        .error { background: #fee; color: #c0392b; padding: 10px; border-radius: 4px; margin-bottom: 10px; border-left: 4px solid #c0392b; }
+        label { font-weight: bold; }
+        .hint { text-align: center; margin-top: 15px; }
+        .hint a { color: #0a3d62; text-decoration: none; }
     </style>
 </head>
 <body>
     <h2>Вход для сотрудника</h2>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required autofocus>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required>
+
         <button type="submit">Войти</button>
     </form>
-    <p><a href="{% url 'list' %}">На главную</a></p>
+    <p class="hint"><a href="{% url 'list' %}">На главную</a></p>
 </body>
 </html>

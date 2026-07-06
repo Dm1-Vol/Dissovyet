@@ -1,7 +1,6 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
+from django.core.exceptions import ValidationError
+from datetime import date
 
 
 class Defence(models.Model):
@@ -13,6 +12,7 @@ class Defence(models.Model):
     STATUS_CHOICES = [
         ('scheduled', 'Назначена'),
         ('defended', 'Защищена'),
+        ('failed', 'Не защищена'),
     ]
 
     title = models.CharField('Название темы', max_length=300)
@@ -23,6 +23,14 @@ class Defence(models.Model):
 
     def __str__(self):
         return f"{self.author} — {self.title[:50]}"
+
+    def clean(self):
+        """Валидация дат в зависимости от статуса"""
+        if self.status == 'defended' and self.defence_date > date.today():
+            raise ValidationError('Дата защиты не может быть в будущем для уже защищённой диссертации')
+
+        if self.status == 'failed' and self.defence_date > date.today():
+            raise ValidationError('Дата защиты не может быть в будущем для диссертации, которая не защищена')
 
     class Meta:
         verbose_name = 'Защита'
